@@ -51,6 +51,7 @@ class BrewHouse(BeerFactory):
         self.kind = kind
         self.price = price
         self.bank = cost
+        self.all = [self.name, self.vol, self.alc, self.price]
 
     def brew_beer(self):
         if self.ingredients:
@@ -83,6 +84,16 @@ class BrewHouse(BeerFactory):
         raise TypeError(
             f'Unsupported operator == between ({type(other)} and {BrewHouse})'
         )
+
+    def __iter__(self):
+        return iter(self.all)
+
+    def __next__(self):
+        if self.beer_barrels == []:
+            raise StopIteration
+        item = self.beer_barrels[0]
+        del self.beer_barrels[0]
+        return item
 
     def __str__(self):
         return f'В цеху {self.name} варится пиво.'
@@ -163,8 +174,8 @@ class MarketingDepartment(BeerFactory):
 
     def sell_beer(self):
         if self.retailer:
-            self.bank.initial_capital += self.part.price  * 1.3
-            self.bank.profit = (self.part.price  * 1.3
+            self.bank.initial_capital += self.part.price * 1.3
+            self.bank.profit = (self.part.price * 1.3
                                 - self.part.price - self.pack.price)
             return (f'{time.asctime()} Партия успешно продана,'
                     f' выручка составила {self.bank.profit}')
@@ -229,3 +240,14 @@ print(bank.initial_capital)
 
 with market as my_file:
     my_file.write(market.sell_beer())
+
+for i in brew:
+    print(i)
+
+iter(brew)
+print(next(brew))
+print(next(brew))
+print(next(brew))
+# print(next(brew))
+
+print(brew.beer_barrels)
